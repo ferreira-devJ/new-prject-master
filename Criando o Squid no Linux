@@ -1,0 +1,36 @@
+# apt-get install squid 
+# mv /etc/squid/squid.conf /etc/squid/squid.conf.orig
+# pico /etc/squid/squid.conf 
+
+
+Vamos criar uma configuração básica no arquivo, adicionando as seguintes linhas: 
+
+http_port 3128
+visible_hostname KORZOS 
+
+acl all src 0.0.0.0/0.0.0.0
+acl manager proto cache_object
+acl localhost src 127.0.0.1/255.255.255.255
+acl SSL_ports port 443 563
+acl Safe_ports port 21 80 443 563 70 210 280 488 59 777 901 1025-65535
+acl purge method PURGE
+acl CONNECT method CONNECT 
+
+http_access allow manager localhost
+http_access deny manager
+http_access allow purge localhost
+http_access deny purge
+http_access deny !Safe_ports
+http_access deny CONNECT !SSL_ports 
+
+acl redelocal src 192.168.0.0/24 
+
+http_access allow localhost
+http_access allow redelocal
+http_access deny all
+
+Depois, dê um: 
+
+# /etc/init.d/squid restart 
+
+Que seu Squid já deve estar em pleno funcionamento. 
